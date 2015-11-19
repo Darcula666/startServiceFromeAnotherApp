@@ -6,35 +6,45 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+
+import net.gfdz.com.startservicefromeanotherapp.IAppServiceInterface;
 
 /**
  * 通过anotherapp启动app的Service
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, ServiceConnection {
-     private Button mbtn01;
+    private Button mbtn01;
     private Button mbtn02;
     private Button mbtn03;
     private Button mbtn04;
+    private Button mbtn05;
+    private EditText etInput;
     Intent i;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mbtn01= (Button) findViewById(R.id.btnStart);
+        mbtn01 = (Button) findViewById(R.id.btnStart);
         mbtn01.setOnClickListener(this);
-        mbtn02= (Button) findViewById(R.id.btnStop);
+        mbtn02 = (Button) findViewById(R.id.btnStop);
         mbtn02.setOnClickListener(this);
-        mbtn03= (Button) findViewById(R.id.btnBindAppService);
+        mbtn03 = (Button) findViewById(R.id.btnBindAppService);
         mbtn03.setOnClickListener(this);
-        mbtn04= (Button) findViewById(R.id.btnUnBindAppService);
+        mbtn04 = (Button) findViewById(R.id.btnUnBindAppService);
         mbtn04.setOnClickListener(this);
-         i=new Intent();
-        i.setComponent(new ComponentName("net.gfdz.com.startservicefromeanotherapp","net.gfdz.com.startservicefromeanotherapp.AppService"));
+        mbtn05 = (Button) findViewById(R.id.btnSync);
+        mbtn05.setOnClickListener(this);
+        etInput = (EditText) findViewById(R.id.etInput);
+        i = new Intent();
+        i.setComponent(new ComponentName("net.gfdz.com.startservicefromeanotherapp", "net.gfdz.com.startservicefromeanotherapp.AppService"));
     }
 
     @Override
@@ -61,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
 
             case R.id.btnStart:
                 startService(i);
@@ -70,10 +80,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 stopService(i);
                 break;
             case R.id.btnBindAppService:
-             bindService(i,this, Context.BIND_AUTO_CREATE);
+                bindService(i, this, Context.BIND_AUTO_CREATE);
                 break;
             case R.id.btnUnBindAppService:
-               unbindService(this);
+                unbindService(this);
+                binder=null;
+                break;
+            case R.id.btnSync:
+                if (binder != null) {
+                    try {
+                        binder.setData(etInput.getText().toString());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
                 break;
         }
     }
@@ -82,10 +102,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onServiceConnected(ComponentName name, IBinder service) {
         System.out.println("Bind Service");
         System.out.println(service);
+        binder = IAppServiceInterface.Stub.asInterface(service);
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
 
     }
+
+    private IAppServiceInterface binder = null;
 }
