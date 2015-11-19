@@ -1,8 +1,11 @@
 package net.gfdz.com.anotherapp;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,9 +15,11 @@ import android.widget.Button;
 /**
  * 通过anotherapp启动app的Service
  */
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, ServiceConnection {
      private Button mbtn01;
     private Button mbtn02;
+    private Button mbtn03;
+    private Button mbtn04;
     Intent i;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +29,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mbtn01.setOnClickListener(this);
         mbtn02= (Button) findViewById(R.id.btnStop);
         mbtn02.setOnClickListener(this);
+        mbtn03= (Button) findViewById(R.id.btnBindAppService);
+        mbtn03.setOnClickListener(this);
+        mbtn04= (Button) findViewById(R.id.btnUnBindAppService);
+        mbtn04.setOnClickListener(this);
          i=new Intent();
         i.setComponent(new ComponentName("net.gfdz.com.startservicefromeanotherapp","net.gfdz.com.startservicefromeanotherapp.AppService"));
     }
@@ -53,14 +62,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+
             case R.id.btnStart:
-
-
                 startService(i);
                 break;
             case R.id.btnStop:
                 stopService(i);
                 break;
+            case R.id.btnBindAppService:
+             bindService(i,this, Context.BIND_AUTO_CREATE);
+                break;
+            case R.id.btnUnBindAppService:
+               unbindService(this);
+                break;
         }
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        System.out.println("Bind Service");
+        System.out.println(service);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+
     }
 }

@@ -14,11 +14,22 @@
         android:id="@+id/btnStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="启动服务" />
+        android:text="启动外部服务" />
 
     <Button
         android:id="@+id/btnStop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="停止服务" />
+        android:text="停止外部服务" />
+    <Button
+        android:id="@+id/btnBindAppService"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="绑定外部服务" />
+
+    <Button
+        android:id="@+id/btnUnBindAppService"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="解除绑定外部服务" />
 </LinearLayout>
